@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, CUSTOM_ELEMENTS_SCHEMA, inject } from '@angular/core';
+import { AsyncPipe } from '@angular/common';
 
 import { TransactionsService } from '../transactions.service';
 import { SparklineService } from '../sparkline.service';
@@ -7,6 +8,9 @@ import { ProcessManagerService } from '../process-manager.service';
 
 @Component({
   selector: 'pl-3-dashboard',
+  standalone: true,
+  imports: [AsyncPipe],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   template: `
     <grid rows="12" cols="12">
       <line
@@ -40,7 +44,7 @@ import { ProcessManagerService } from '../process-manager.service';
         [data]="transactions$ | async">
       </line>
 
-      <table
+      <contrib-table
         [row]="3"
         [col]="0"
         [rowSpan]="3"
@@ -50,8 +54,8 @@ import { ProcessManagerService } from '../process-manager.service';
         [keys]="true"
         [columnSpacing]="1"
         [columnWidth]="[28,20,20]"
-        [data]="process$ |async">
-      </table>
+        [data]="process$ | async">
+      </contrib-table>
 
       <map
         [row]="6"
@@ -76,14 +80,13 @@ import { ProcessManagerService } from '../process-manager.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DashboardComponent {
+  private readonly transactionsService = inject(TransactionsService);
+  private readonly sparklineService = inject(SparklineService);
+  private readonly serversUtilization = inject(ServerUtilizationService);
+  private readonly processManager = inject(ProcessManagerService);
+
   transactions$ = this.transactionsService.transactions$;
   sparkline$ = this.sparklineService.sparkline$;
   serversUtilization$ = this.serversUtilization.serversUtilization$;
   process$ = this.processManager.process$;
-
-  constructor(private transactionsService: TransactionsService,
-              private sparklineService: SparklineService,
-              private serversUtilization: ServerUtilizationService,
-              private processManager: ProcessManagerService) {
-  }
 }

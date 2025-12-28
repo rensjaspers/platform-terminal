@@ -4,6 +4,6 @@ import { ErrorHandler, Injectable } from '@angular/core';
 export class TerminalErrorHandler implements ErrorHandler {
   handleError(error: Error): void {
     console.error(error.message, error.stack);
-    process.exit(0);
+    process.exit(1);
   }
 }

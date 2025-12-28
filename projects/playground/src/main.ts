@@ -1,12 +1,5 @@
-import { platformTerminalDynamic } from 'platform-terminal';
-import { enableProdMode } from '@angular/core';
+import { bootstrapTerminalApplication } from 'platform-terminal';
 
-import { AppModule } from './app/app.module';
-import { environment } from './environments/environment';
+import { AppComponent } from './app/app.component';
 
-if (environment.production) {
-  enableProdMode();
-}
-
-platformTerminalDynamic().bootstrapModule(AppModule)
-  .catch(err => console.error(err));
+bootstrapTerminalApplication(AppComponent).catch((err) => console.error(err));

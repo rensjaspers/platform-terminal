@@ -1,7 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 
 @Component({
   selector: 'pl-2-text-in-box',
+  standalone: true,
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   template: `
     <box top="center"
          left="center"

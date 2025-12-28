@@ -1,9 +1,14 @@
-import { Injectable, Renderer2, RendererFactory2, RendererStyleFlags2, RendererType2 } from '@angular/core';
-import { Widgets } from 'blessed';
-import * as contrib from 'blessed-contrib';
+import {
+  Injectable,
+  Renderer2,
+  RendererFactory2,
+  RendererStyleFlags2,
+  RendererType2,
+} from "@angular/core";
+import type { Widgets } from "blessed";
 
-import { Screen } from './screen';
-
+import { contrib } from "./blessed-imports";
+import { Screen } from "./screen";
 
 @Injectable()
 export class TerminalRendererFactory implements RendererFactory2 {
@@ -13,44 +18,55 @@ export class TerminalRendererFactory implements RendererFactory2 {
     this.renderer = new TerminalRenderer(screen);
   }
 
-  end() {
+  end(): void {
     this.screen.selectRootElement().render();
   }
 
-  createRenderer(hostElement: any, type: RendererType2 | null): Renderer2 {
+  createRenderer(
+    _hostElement: unknown,
+    _type: RendererType2 | null
+  ): Renderer2 {
     return this.renderer;
   }
 }
 
 export class TerminalRenderer implements Renderer2 {
-  readonly data: { [p: string]: any };
-  destroyNode: ((node: any) => void) | null;
+  readonly data: Record<string, unknown> = {};
+  destroyNode: ((node: unknown) => void) | null = null;
 
-  constructor(private screen: Screen) {
-  }
+  constructor(private screen: Screen) {}
 
-  createElement(name: string, namespace?: string | null): any {
+  createElement(
+    name: string,
+    _namespace?: string | null
+  ): Widgets.BlessedElement {
     return this.screen.createElement(name);
   }
 
-  createText(value: string): any {
-    return this.screen.createElement('text', { content: value });
+  createText(value: string): Widgets.BlessedElement {
+    return this.screen.createElement("text", { content: value });
   }
 
   selectRootElement(): Widgets.Screen {
     return this.screen.selectRootElement();
   }
 
-  addClass(el: any, name: string): void {
+  addClass(_el: unknown, _name: string): void {
+    // Terminal elements don't use CSS classes
   }
 
-  appendChild(parent: Widgets.BlessedElement, newChild: Widgets.BlessedElement): void {
+  appendChild(
+    parent: Widgets.BlessedElement,
+    newChild: Widgets.BlessedElement
+  ): void {
     if (newChild instanceof contrib.grid) {
       return;
     }
 
     if (parent instanceof contrib.grid) {
-      (newChild as any).appendTo(parent);
+      (newChild as unknown as { appendTo: (parent: unknown) => void }).appendTo(
+        parent
+      );
       return;
     }
 
@@ -59,53 +75,90 @@ export class TerminalRenderer implements Renderer2 {
     }
   }
 
-  createComment(value: string): any {
+  createComment(_value: string): unknown {
+    return null;
   }
 
   destroy(): void {
+    // Cleanup if needed
   }
 
-  insertBefore(parent: any, newChild: any, refChild: any): void {
+  insertBefore(_parent: unknown, _newChild: unknown, _refChild: unknown): void {
+    // Not implemented for terminal
   }
 
-  listen(target: Widgets.BlessedElement, eventName: string, callback: (event: any) => (boolean | void)): () => void {
-    target.on('click', callback);
-    return function () {
+  listen(
+    target: Widgets.BlessedElement,
+    eventName: string,
+    callback: (event: unknown) => boolean | void
+  ): () => void {
+    target.on(eventName, callback);
+    return () => {
+      target.off(eventName, callback);
     };
   }
 
-  nextSibling(node: any): any {
+  nextSibling(_node: unknown): unknown {
+    return null;
   }
 
-  parentNode(node: any): any {
+  parentNode(_node: unknown): unknown {
+    return null;
   }
 
-  removeAttribute(el: any, name: string, namespace?: string | null): void {
+  removeAttribute(
+    _el: unknown,
+    _name: string,
+    _namespace?: string | null
+  ): void {
+    // Not implemented
   }
 
-  removeChild(parent: any, oldChild: any): void {
-  }
-
-  removeClass(el: any, name: string): void {
-  }
-
-  removeStyle(el: any, style: string, flags?: RendererStyleFlags2): void {
-  }
-
-  setAttribute(el: Widgets.BlessedElement, name: string, value: string, namespace?: string | null): void {
-    el[name] = value;
-  }
-
-  setProperty(el: Widgets.BlessedElement, name: string, value: any): void {
-    if (name === 'styles') {
-      name = 'style';
-    } else {
-      el[name] = value;
+  removeChild(
+    parent: Widgets.BlessedElement,
+    oldChild: Widgets.BlessedElement
+  ): void {
+    if (parent && oldChild) {
+      parent.remove(oldChild);
     }
   }
 
-  setStyle(el: Widgets.BlessedElement, style: string, value: any, flags?: RendererStyleFlags2): void {
-    el[style] = value;
+  removeClass(_el: unknown, _name: string): void {
+    // Terminal elements don't use CSS classes
+  }
+
+  removeStyle(
+    _el: unknown,
+    _style: string,
+    _flags?: RendererStyleFlags2
+  ): void {
+    // Not implemented
+  }
+
+  setAttribute(
+    el: Widgets.BlessedElement,
+    name: string,
+    value: string,
+    _namespace?: string | null
+  ): void {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (el as any)[name] = value;
+  }
+
+  setProperty(el: Widgets.BlessedElement, name: string, value: unknown): void {
+    const propertyName = name === "styles" ? "style" : name;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (el as any)[propertyName] = value;
+  }
+
+  setStyle(
+    el: Widgets.BlessedElement,
+    style: string,
+    value: unknown,
+    _flags?: RendererStyleFlags2
+  ): void {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (el as any)[style] = value;
   }
 
   setValue(node: Widgets.BlessedElement, value: string): void {

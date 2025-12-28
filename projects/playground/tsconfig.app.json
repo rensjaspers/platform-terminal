@@ -1,12 +1,13 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "outDir": "../../dist",
-    "module": "commonjs",
-    "types": []
+    "outDir": "../../dist/playground",
+    "module": "CommonJS",
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "types": ["node"]
   },
-  "exclude": [
-    "test.ts",
-    "**/*.spec.ts"
-  ]
+  "files": ["src/main.ts"],
+  "include": ["src/**/*.ts", "../../neo-blessed.d.ts"],
+  "exclude": ["src/test.ts", "**/*.spec.ts"]
 }

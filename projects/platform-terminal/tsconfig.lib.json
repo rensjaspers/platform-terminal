@@ -2,31 +2,16 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "outDir": "../../out-tsc/lib",
-    "target": "es2015",
-    "module": "es2015",
-    "moduleResolution": "node",
     "declaration": true,
-    "sourceMap": true,
+    "declarationMap": true,
     "inlineSources": true,
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
-    "importHelpers": true,
-    "types": [],
-    "lib": [
-      "dom",
-      "es2018"
-    ]
+    "types": ["node", "blessed"],
+    "typeRoots": ["../../node_modules/@types"],
+    "lib": ["ES2022", "DOM"]
   },
   "angularCompilerOptions": {
-    "annotateForClosureCompiler": true,
-    "skipTemplateCodegen": true,
-    "strictMetadataEmit": true,
-    "fullTemplateTypeCheck": true,
-    "strictInjectionParameters": true,
-    "enableResourceInlining": true
+    "compilationMode": "partial"
   },
-  "exclude": [
-    "src/test.ts",
-    "**/*.spec.ts"
-  ]
+  "include": ["src/**/*.ts", "src/**/*.d.ts", "../../neo-blessed.d.ts"],
+  "exclude": ["src/test.ts", "**/*.spec.ts"]
 }
